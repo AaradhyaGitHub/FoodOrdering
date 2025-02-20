@@ -195,3 +195,41 @@ export default function MealItem({ meal }) {
   );
 }
 ```
+
+---
+
+## Creating a flexible Button element
+We know we will have various buttons in our App so it makes sense to have one generic button Component that is styled differently.
+
+## UI Folder inside `components`
+At the end of the day, all components are UI blocks but it makes sense to take more generic UI components like this button inisde a `UI` folder inside `components` folder
+
+Here is the implementation of a generic button Component inside the new `UI` folder: 
+
+```jsx
+export default function Button({ children, textOnly, className, ...props }) {
+  let cssClasses = textOnly ? "text-button" : "button";
+  cssClasses += " " + className;
+  return (
+    <button className={cssClasses} {...props}>
+      {children}
+    </button>
+  );
+}
+```
+---
+
+## Using custom <Button>
+
+In the `MealItem` componenet where the button is just a generic button, we can show it as: 
+
+```jsx
+<Button>Add to Cart</Button>
+```
+In the `Header` component where the button is a text, we can implement it as: 
+
+```jsx
+<Button textOnly>Cart (0)</Button>
+```
+
+Just declaring the `textOnly` prop sets it as `true`. So back in the `Button` component, the `text-button` CSS class is applied dynamically. 
