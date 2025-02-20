@@ -18,3 +18,6 @@ Make a component folder under src
 Make a Header.jsx file 
 Header returns the HTML header element with some other generic header elements inside it like nav 
 Then we import that on App and display our very first component
+
+
+--- 
