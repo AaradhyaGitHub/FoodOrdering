@@ -9,7 +9,9 @@ Let's start by sketching out what we want to build. Our app will have:
 - A checkout feature with a form
 
 ### Project Roadmap
+
 Here's our step-by-step plan:
+
 1. Add the Header Component
 2. Add meals-related components
 3. Add logic to fetch meals from backend
@@ -21,6 +23,7 @@ Here's our step-by-step plan:
 ### Setting Up Our First Component
 
 First, let's create our basic structure:
+
 1. Create a `components` folder under `src`
 2. Create `Header.jsx` inside components folder
 
@@ -28,13 +31,13 @@ Here's our first component implementation:
 
 ```jsx
 // components/Header.jsx
-import logoImg from '../assets/logo.jpg'
+import logoImg from "../assets/logo.jpg";
 
 export default function Header() {
   return (
     <header id="main-header">
       <div id="title">
-        <img src={logoImg} alt="Dining table at a resturant"/>
+        <img src={logoImg} alt="Dining table at a resturant" />
         <h1>Foodie</h1>
       </div>
       <nav>
@@ -73,17 +76,20 @@ Now, let's display the meals. Create `Meals.jsx` in the components folder. The i
 Here's what we need to consider:
 
 1. **Making HTTP Requests**:
+
    - Use `fetch()` with URL "http://localhost:3000/meals"
    - Need to await this request (takes time to fetch)
    - Can't make component function async directly
    - Need a separate async function for fetching
 
 2. **Handling the Response**:
+
    - Check if response is okay: `if(!response.ok)`
    - Convert response to JSON (also needs await)
    - Will add try-catch error handling later
 
 3. **State Management**:
+
    - Data won't be available immediately
    - Need UI handling for loading state
    - Use useState: `const [loadedMeals, setLoadedMeals] = useState([])`
@@ -125,15 +131,67 @@ export default function Meals() {
 ```
 
 ### Technical Note
+
 Why don't we need state updating functions in useEffect dependencies?
+
 - React guarantees these functions remain stable
 - They don't need to be included in the dependency array
 
 ## Next Steps
-Now that we have our basic structure working, we'll need to:
-1. Style our components
-2. Add more meal details to display
-3. Implement cart functionality
-4. Build the checkout form
 
-Let me know when you're ready to move on to the next part of the implementation!
+Now that we have our basic structure working, we can implement a `MealItem` Componenet:
+
+```jsx
+export default function MealItem({ meal }) {
+  return (
+    <li className="meal-item">
+      <article>
+        <img src={meal.image} alt={meal.name} />
+        <div>
+          <h3>{meal.name}</h3>
+          <p className="meal-item-price">{meal.price}</p>
+          <p className="meal-item-description">{meal.description}</p>
+        </div>
+        <p className="meal-item-actions">
+          <button>Add to Cart</button>
+        </p>
+      </article>
+    </li>
+  );
+}
+```
+
+Next, this might be a little overkill but we can create a utility function to format our prices
+
+```js
+export const currencyFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD"
+});
+```
+
+This can allow us to use this formatter in our components as such:
+
+```jsx
+import { currencyFormatter } from "../util/formatting";
+
+export default function MealItem({ meal }) {
+  return (
+    <li className="meal-item">
+      <article>
+        <img src={`http://localhost:3000/${meal.image}`} alt={meal.name} />
+        <div>
+          <h3>{meal.name}</h3>
+          <p className="meal-item-price">
+            {currencyFormatter.format(meal.price)}
+          </p>
+          <p className="meal-item-description">{meal.description}</p>
+        </div>
+        <p className="meal-item-actions">
+          <button>Add to Cart</button>
+        </p>
+      </article>
+    </li>
+  );
+}
+```
