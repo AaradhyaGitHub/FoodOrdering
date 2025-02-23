@@ -10,7 +10,7 @@ import CartItem from "./CartItem";
 export default function Cart() {
   const cartCtx = useContext(CartContext);
   const userProgressCtx = useContext(UserProgressContext);
-  
+
   const cartTotal = cartCtx.items.reduce(
     (finalPrice, item) => finalPrice + item.quantity * item.price,
     0
@@ -18,6 +18,10 @@ export default function Cart() {
 
   function handleCloseCart() {
     userProgressCtx.hideCart();
+  }
+
+  function handleGoToCheckout(){
+    userProgressCtx.showCheckout();
   }
 
   return (
@@ -41,9 +45,9 @@ export default function Cart() {
         <Button textOnly onClick={handleCloseCart}>
           Close
         </Button>
-        <Button onClick={handleCloseCart}>
-          Proceed to Checkout
-        </Button>
+        {cartCtx.items.length > 0 && (
+          <Button onClick={handleGoToCheckout}>Proceed to Checkout</Button>
+        )}
       </p>
     </Modal>
   );
