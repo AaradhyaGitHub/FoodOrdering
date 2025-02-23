@@ -1,7 +1,7 @@
 import { currencyFormatter } from "../util/formatting";
 
 export default function CartItem({
-  id,  // Add this prop
+  id,
   name,
   quantity,
   price,
