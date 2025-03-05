@@ -1,21 +1,23 @@
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from 'react';
 
 async function sendHttpRequest(url, config) {
   const response = await fetch(url, config);
+
   const resData = await response.json();
 
   if (!response.ok) {
     throw new Error(
-      resData.message || "Something went wrong, failed to send request"
+      resData.message || 'Something went wrong, failed to send request.'
     );
   }
+
   return resData;
 }
 
 export default function useHttp(url, config, initialData) {
   const [data, setData] = useState(initialData);
-  const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
 
   function clearData() {
     setData(initialData);
@@ -23,22 +25,12 @@ export default function useHttp(url, config, initialData) {
 
   const sendRequest = useCallback(
     async function sendRequest(data) {
-      console.log("Sending request to:", url);
-      console.log(
-        "Request config:",
-        JSON.stringify({ ...config, body: JSON.stringify(data) })
-      );
-
       setIsLoading(true);
       try {
-        const resData = await sendHttpRequest(url, {
-          ...config,
-          headers: { "Content-Type": "application/json", ...config.headers },
-          body: JSON.stringify(data)
-        });
+        const resData = await sendHttpRequest(url, { ...config, body: data });
         setData(resData);
       } catch (error) {
-        setError(error.message || "Something went wrong");
+        setError(error.message || 'Something went wrong!');
       }
       setIsLoading(false);
     },
@@ -46,10 +38,16 @@ export default function useHttp(url, config, initialData) {
   );
 
   useEffect(() => {
-    if (!config.method || config.method === "GET") {
+    if ((config && (config.method === 'GET' || !config.method)) || !config) {
       sendRequest();
     }
   }, [sendRequest, config]);
 
-  return { data, isLoading, error, sendRequest, clearData };
+  return {
+    data,
+    isLoading,
+    error,
+    sendRequest,
+    clearData
+  };
 }
